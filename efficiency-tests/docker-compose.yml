@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  mongodb:
+    image: mongo:4.4.0
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+
+  rethinkdb:
+    image: rethinkdb:2.4.1
+    container_name: rethonkdb
+    ports:
+      - "8080:8080"
+      - "28015:28015"
