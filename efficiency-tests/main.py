@@ -61,17 +61,19 @@ def plot_result(rethink_data: list, mongo_data: list):
     print(rethink_time_series)
     print(mongo_time_series)
 
-    fig, axs = plt.subplots(2)
-    axs[0].set_title('Rethinkdb')
-    axs[0].plot(rethink_time_series)
-    axs[1].set_title('Mongodb')
-    axs[1].plot(mongo_time_series)
+    plt.plot(rethink_time_series)
+    plt.plot(mongo_time_series)
+
+    plt.legend(['RethinkDb', 'MongoDb'])
+    plt.xlabel('number of inserted rows')
+    plt.ylabel('time (s)')
+
     plt.savefig('inserts.png')
 
 
 if __name__ == '__main__':
 
-    inserts_number = 100
+    inserts_number = 10_000
 
     rethink_test = RethinkTest()
     rethink_test.test_efficiency(inserts_num=inserts_number)
