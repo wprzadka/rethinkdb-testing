@@ -6,10 +6,17 @@ services:
     container_name: mongodb
     ports:
       - "27017:27017"
-
   rethinkdb:
     image: rethinkdb:2.4.1
     container_name: rethonkdb
     ports:
       - "8080:8080"
       - "28015:28015"
+  couchdb:
+    image: couchdb:3.1.1
+    container_name: couchdb
+    ports:
+      - "5984:5984"
+    environment:
+      - 'COUCHDB_USER=admin'
+      - 'COUCHDB_PASSWORD=password'
