@@ -20,7 +20,7 @@ def plot_result(
     # print(mongo_time_series)
     # print(couch_time_series)
     for name, series in zip(series_names_li, time_series):
-        print(f'f{name}: {series}')
+        print(f'{name}: {series}')
 
     for series in time_series:
         plt.plot(series)
