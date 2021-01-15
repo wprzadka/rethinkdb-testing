@@ -43,6 +43,64 @@ class RethinkTest:
 
         print('test finished')
 
+    @classmethod
+    def test_sorting_efficiancy(cls, inserts_num: int):
+        idx = 0
+        print('test started')
+
+        start = time.time()
+        while idx < inserts_num:
+            r.table('read_write').insert({'id': idx, 'time': time.time() - start}).run()
+            r.table('read_write').orderBy({'index': r.desc('id')})
+            idx += 1
+
+        print('test finished')
+
+    @classmethod
+    def test_join_table_efficiancy(cls, inserts_num: int):
+        idx = 0
+        print('test started')
+
+        start = time.time()
+        while idx < inserts_num:
+            r.table('join_table_first').insert({'id': idx, 'time': time.time() - start}).run()
+            idx += 1
+
+        while idx < 2 * inserts_num:
+            r.table('join_table_second').insert({'id': idx, 'time': time.time() - start}).run()
+            idx += 1
+
+        r.table('join_table_first').eq_join('id', r.table('join_table_second')).zip().run()
+
+        print('test finished')
+
+    @classmethod
+    def test_search_row_efficiancy(cls, inserts_num: int):
+        idx = 0
+        print('test started')
+
+        start = time.time()
+        while idx < inserts_num:
+            r.table('table_key').insert({'id': idx, 'time': time.time() - start}).run()
+            idx += 1
+
+        r.table('table_key').get('345')
+
+        print('test finished')
+
+    @classmethod
+    def test_copy_table_efficiancy(cls, inserts_num: int):
+        idx = 0
+        print('test started')
+
+        start = time.time()
+        while idx < inserts_num:
+            r.table('table_copy').insert({'id': idx, 'time': time.time() - start}).run()
+            idx += 1
+
+        r.table('talbe_to_copy').insert(r.table('table_copy')).run()
+
+        print('test finished')
 
     @classmethod
     def get_results(cls, schema) -> list:
