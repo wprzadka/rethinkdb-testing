@@ -44,7 +44,7 @@ class RethinkTest:
         print('test finished')
 
     @classmethod
-    def test_sorting_efficiancy(cls, inserts_num: int):
+    def test_sorting_efficiency(cls, inserts_num: int):
         idx = 0
         print('test started')
 
@@ -57,8 +57,18 @@ class RethinkTest:
         print('test finished')
 
     @classmethod
-    def test_join_table_efficiancy(cls, iterations_num: int):
+    def test_join_table_efficiency(cls, iterations_num: int):
+
+        if 'join_table_first' in r.db('test').table_list().run():
+            r.db('test').table_drop('join_table_first').run()
+        r.db('test').table_create('join_table_first').run()
+
+        if 'join_table_second' in r.db('test').table_list().run():
+            r.db('test').table_drop('join_table_second').run()
+        r.db('test').table_create('join_table_second').run()
+
         print('test started')
+
         idx = 0
         current_iteration = 0
 
@@ -66,23 +76,25 @@ class RethinkTest:
 
             current_iteration += 1
 
-            while idx < current_iteration * iterations_num:
-                r.table('join_table_first').insert({'id': idx, 'a': f'a_value_{idx}'}).run()
-                idx += 1
-
-            while idx < 2 * current_iteration * iterations_num:
-                r.table('join_table_second').insert({'id': idx, 'b': f'b_value_{idx}'}).run()
-                idx += 1
+            fst_idx = idx
+            while fst_idx < current_iteration * iterations_num:
+                r.table('join_table_first').insert({'id': fst_idx, 'a': f'a_value_{fst_idx}'}).run()
+                fst_idx += 1
+            snd_idx = idx
+            while snd_idx < current_iteration * iterations_num:
+                r.table('join_table_second').insert({'id': snd_idx, 'b': f'b_value_{snd_idx}'}).run()
+                snd_idx += 1
+            idx += current_iteration * iterations_num
 
             start = time.time()
             r.table('join_table_first').eq_join('id', r.table('join_table_second')).zip().run()
             end = time.time()
-            r.table('join_table').insert({'id': iterations_num, 'time': end - start}).run()
+            r.table('join_table').insert({'id': current_iteration, 'time': end - start}).run()
 
         print('test finished')
 
     @classmethod
-    def test_search_row_efficiancy(cls, inserts_num: int):
+    def test_search_row_efficiency(cls, inserts_num: int):
         idx = 0
         print('test started')
 
@@ -96,7 +108,7 @@ class RethinkTest:
         print('test finished')
 
     @classmethod
-    def test_copy_table_efficiancy(cls, inserts_num: int):
+    def test_copy_table_efficiency(cls, inserts_num: int):
         idx = 0
         print('test started')
 
