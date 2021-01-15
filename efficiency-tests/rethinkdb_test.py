@@ -150,16 +150,31 @@ class RethinkTest:
         print('test finished')
 
     @classmethod
-    def test_copy_table_efficiency(cls, inserts_num: int):
+    def test_copy_table_efficiency(cls, iterations_num: int):
         idx = 0
+        mod = iterations_num / min(10, iterations_num)
+
+        if 'table_to_copy' in r.db('test').table_list().run():
+            r.db('test').table_drop('table_to_copy').run()
+        r.db('test').table_create('table_to_copy').run()
+
+        if 'source' in r.db('test').table_list().run():
+            r.db('test').table_drop('source').run()
+        r.db('test').table_create('source').run()
+
         print('test started')
 
-        start = time.time()
-        while idx < inserts_num:
-            r.table('table_copy').insert({'id': idx, 'time': time.time() - start}).run()
-            idx += 1
+        while idx < iterations_num:
+            r.table('source').insert({'value': idx}).run()
+            if idx % mod == 0:
+                start = time.time()
+                r.table('table_to_copy').insert(r.table('source')).run()
+                end = time.time()
+                r.table('copy_table').insert({'id': idx, 'time': end - start}).run()
 
-        r.table('table_to_copy').insert(r.table('table_copy')).run()
+                r.db('test').table_drop('table_to_copy').run()
+                r.db('test').table_create('table_to_copy').run()
+            idx += 1
 
         print('test finished')
 
