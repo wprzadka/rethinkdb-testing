@@ -35,7 +35,7 @@ def get_average_time(data_series: list):
 if __name__ == '__main__':
 
     iterations_num = 1_00
-    tests = [('join_table', True)]
+    tests = [('sorting', True)]
     # [('join_table', True), ('inserts', True), ('read_write', True)]
 
     for test_name, recreate_collection in tests:

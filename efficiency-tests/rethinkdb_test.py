@@ -44,14 +44,23 @@ class RethinkTest:
         print('test finished')
 
     @classmethod
-    def test_sorting_efficiency(cls, inserts_num: int):
+    def test_sorting_efficiency(cls, iterations_num: int):
         idx = 0
+        mod = iterations_num / min(100, iterations_num)
+
+        if 'source' in r.db('test').table_list().run():
+            r.db('test').table_drop('source').run()
+        r.db('test').table_create('source').run()
+
         print('test started')
 
-        start = time.time()
-        while idx < inserts_num:
-            r.table('read_write').insert({'id': idx, 'time': time.time() - start}).run()
-            r.table('read_write').orderBy({'index': r.desc('id')})
+        while idx < iterations_num:
+            r.table('source').insert({'value': idx}).run()
+            if idx % mod == 0:
+                start = time.time()
+                r.table('source').order_by(r.desc('value'))
+                end = time.time()
+                r.table('sorting').insert({'id': idx, 'time': end - start}).run()
             idx += 1
 
         print('test finished')
@@ -117,7 +126,7 @@ class RethinkTest:
             r.table('table_copy').insert({'id': idx, 'time': time.time() - start}).run()
             idx += 1
 
-        r.table('talbe_to_copy').insert(r.table('table_copy')).run()
+        r.table('table_to_copy').insert(r.table('table_copy')).run()
 
         print('test finished')
 
