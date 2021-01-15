@@ -57,20 +57,27 @@ class RethinkTest:
         print('test finished')
 
     @classmethod
-    def test_join_table_efficiancy(cls, inserts_num: int):
-        idx = 0
+    def test_join_table_efficiancy(cls, iterations_num: int):
         print('test started')
+        idx = 0
+        current_iteration = 0
 
-        start = time.time()
-        while idx < inserts_num:
-            r.table('join_table_first').insert({'id': idx, 'time': time.time() - start}).run()
-            idx += 1
+        while current_iteration < iterations_num:
 
-        while idx < 2 * inserts_num:
-            r.table('join_table_second').insert({'id': idx, 'time': time.time() - start}).run()
-            idx += 1
+            current_iteration += 1
 
-        r.table('join_table_first').eq_join('id', r.table('join_table_second')).zip().run()
+            while idx < current_iteration * iterations_num:
+                r.table('join_table_first').insert({'id': idx, 'a': f'a_value_{idx}'}).run()
+                idx += 1
+
+            while idx < 2 * current_iteration * iterations_num:
+                r.table('join_table_second').insert({'id': idx, 'b': f'b_value_{idx}'}).run()
+                idx += 1
+
+            start = time.time()
+            r.table('join_table_first').eq_join('id', r.table('join_table_second')).zip().run()
+            end = time.time()
+            r.table('join_table').insert({'id': iterations_num, 'time': end - start}).run()
 
         print('test finished')
 
