@@ -1,6 +1,7 @@
 from rethinkdb import r
 from rethinkdb.errors import ReqlRuntimeError
 import time
+import random
 
 
 class RethinkTest:
@@ -58,7 +59,7 @@ class RethinkTest:
             r.table('source').insert({'value': idx}).run()
             if idx % mod == 0:
                 start = time.time()
-                r.table('source').order_by(r.desc('value'))
+                r.table('source').order_by(r.desc('value')).run()
                 end = time.time()
                 r.table('sorting').insert({'id': idx, 'time': end - start}).run()
             idx += 1
@@ -103,16 +104,48 @@ class RethinkTest:
         print('test finished')
 
     @classmethod
-    def test_search_row_efficiency(cls, inserts_num: int):
+    def test_search_row_by_id_10_times_efficiency(cls, iterations_num: int):
         idx = 0
+        mod = iterations_num / min(100, iterations_num)
+
+        if 'source' in r.db('test').table_list().run():
+            r.db('test').table_drop('source').run()
+        r.db('test').table_create('source').run()
+
         print('test started')
 
-        start = time.time()
-        while idx < inserts_num:
-            r.table('table_key').insert({'id': idx, 'time': time.time() - start}).run()
+        while idx < iterations_num:
+            r.table('source').insert({'id': idx}).run()
+            if idx % mod == 0:
+                start = time.time()
+                for _ in range(10):
+                    r.table('source').get(random.randint(0, idx)).run()
+                end = time.time()
+                r.table('search_row_by_id_10_times').insert({'id': idx, 'time': end - start}).run()
             idx += 1
 
-        r.table('table_key').get('345')
+        print('test finished')
+
+    @classmethod
+    def test_search_row_by_value_10_times_efficiency(cls, iterations_num: int):
+        idx = 0
+        mod = iterations_num / min(100, iterations_num)
+
+        if 'source' in r.db('test').table_list().run():
+            r.db('test').table_drop('source').run()
+        r.db('test').table_create('source').run()
+
+        print('test started')
+
+        while idx < iterations_num:
+            r.table('source').insert({'value': idx}).run()
+            if idx % mod == 0:
+                start = time.time()
+                for _ in range(10):
+                    r.table('source').filter({'value': random.randint(0, idx)}).run()
+                end = time.time()
+                r.table('search_row_by_value_10_times').insert({'id': idx, 'time': end - start}).run()
+            idx += 1
 
         print('test finished')
 

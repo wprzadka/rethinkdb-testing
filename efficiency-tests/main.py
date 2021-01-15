@@ -35,8 +35,9 @@ def get_average_time(data_series: list):
 if __name__ == '__main__':
 
     iterations_num = 1_00
-    tests = [('sorting', True)]
-    # [('join_table', True), ('inserts', True), ('read_write', True)]
+    tests = [('search_row_by_value_10_times', True)]
+    # [('inserts', True), ('read_write', True), ('sorting', True), ('join_table', True),
+    # ('search_row_by_id_10_times', True)]
 
     for test_name, recreate_collection in tests:
         test_func_name = f'test_{test_name}_efficiency'
