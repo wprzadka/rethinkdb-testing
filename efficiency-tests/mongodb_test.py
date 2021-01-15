@@ -4,10 +4,11 @@ import time
 
 class MongoTest:
 
-    def __init__(self, collection: str):
+    def __init__(self, collection: str, recreate: bool):
         mongo_cli = MongoClient('127.0.0.1', 27017)
         self.db = mongo_cli.test
-        self.db[collection].drop()
+        if recreate:
+            self.db[collection].drop()
 
     def test_inserts_efficiency(self, inserts_num: int):
         idx = 0

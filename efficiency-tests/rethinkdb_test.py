@@ -5,13 +5,17 @@ import time
 
 class RethinkTest:
 
-    def __init__(self, collection: str):
+    def __init__(self, collection: str, recreate: bool):
         r.connect('localhost', 28015).repl()
-        try:
-            r.db('test').table_drop(collection).run()
-        except ReqlRuntimeError:
-            pass
-        r.db('test').table_create(collection).run()
+
+        if recreate:
+            try:
+                r.db('test').table_drop(collection).run()
+            except ReqlRuntimeError:
+                pass
+
+        if collection not in r.db('test').table_list().run():
+            r.db('test').table_create(collection).run()
         # r.table(collection).reconfigure(shards=2, replicas=1).run()
 
     @classmethod
@@ -38,6 +42,7 @@ class RethinkTest:
             idx += 1
 
         print('test finished')
+
 
     @classmethod
     def get_results(cls, schema) -> list:

@@ -3,16 +3,17 @@ import couchdb
 
 
 class CouchTest:
-    def __init__(self, schema: str):
+    def __init__(self, schema: str, recreate: bool):
         user = "admin"
         password = "password"
         self.couchserver = couchdb.Server("http://%s:%s@127.0.0.1:5984/" % (user, password))
 
-        if schema in self.couchserver:
+        if recreate and schema in self.couchserver:
             del self.couchserver[schema]
-        self.db = self.couchserver.create(schema)
-
-        select_all = 'function(doc) { emit((doc.id), doc); }'
+        try:
+            self.db = self.couchserver[schema]
+        except couchdb.http.ResourceNotFound:
+            self.db = self.couchserver.create(schema)
 
     def test_inserts_efficiency(self, inserts_num: int):
         idx = 0
