@@ -1,4 +1,14 @@
 import socket
+import threading
+
+
+def resend_data(source: socket.socket, destination: socket.socket):
+    while True:
+        data = source.recv(1024)
+        if not data:
+            continue
+        print(f'{source}>_\n{data}')
+        destination.sendall(data)
 
 
 if __name__ == '__main__':
@@ -14,15 +24,18 @@ if __name__ == '__main__':
     db_s.connect(('127.0.0.1', 28015))
     # Database>_b'{"max_protocol_version":0,"min_protocol_version":0,"server_version":"2.3.2-windows-beta-584-gffe554","success":true}\x00'
 
-    while True:
-        data = conn.recv(1024)
-        if not data:
-            break
-        print(f'Client>_{data}')
-        db_s.sendall(data)
+    threading.Thread(target=resend_data, args=(db_s, conn), daemon=True).start()
+    threading.Thread(target=resend_data, args=(conn, db_s), daemon=True).start()
 
-        data = db_s.recv(1024)
-        if not data:
-            break
-        print(f'Database>_{data}')
-        conn.sendall(data)
+    # while True:
+    #     data = conn.recv(1024)
+    #     if not data:
+    #         break
+    #     print(f'Client>_{data}')
+    #     db_s.sendall(data)
+    #
+    #     data = db_s.recv(1024)
+    #     if not data:
+    #         break
+    #     print(f'Database>_{data}')
+    #     conn.sendall(data)
