@@ -9,35 +9,26 @@ def resend_data(source: socket.socket, destination: socket.socket, name: str):
             print(f'{name}>_{data}\n')
             destination.sendall(data)
 
-        # data = b''
-        # while not data or data[-1] != '\x00':
-        #     buffer = source.recv(4096)
-        #     if buffer:
-        #         data += buffer
-        #         print(data)
-        # print(f'{source}\n>_{data}\n')
-        # destination.sendall(data)
-
 
 if __name__ == '__main__':
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    # s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    s.bind(('0.0.0.0', 28016))
-    s.listen(1)
-    conn, addr = s.accept()
-    print('Connected by', addr)
-    # Connected by('127.0.0.1', 54854)
-    # b'\xc3\xbd\xc24{"protocol_version":0,"authentication_method":"SCRAM-SHA-256","authentication":"n,,n=admin,r=xylvqR28RzZY70ErNe7OPc6P"}\x00'
-
-    db_s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    db_s.connect(('127.0.0.1', 28015))
-    # Database>_b'{"max_protocol_version":0,"min_protocol_version":0,"server_version":"2.3.2-windows-beta-584-gffe554","success":true}\x00'
-
-    threading.Thread(target=resend_data, args=(db_s, conn, 'server'), daemon=True).start()
-    threading.Thread(target=resend_data, args=(conn, db_s, 'client'), daemon=True).start()
-
     while True:
-        pass
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        s.bind(('0.0.0.0', 28016))
+        s.listen(1)
+        conn, addr = s.accept()
+        print('---')
+        print('Connected by', addr)
+        # Connected by('127.0.0.1', 54854)
+        # b'\xc3\xbd\xc24{"protocol_version":0,"authentication_method":"SCRAM-SHA-256","authentication":"n,,n=admin,r=xylvqR28RzZY70ErNe7OPc6P"}\x00'
+
+        db_s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        db_s.connect(('127.0.0.1', 28015))
+        # Database>_b'{"max_protocol_version":0,"min_protocol_version":0,"server_version":"2.3.2-windows-beta-584-gffe554","success":true}\x00'
+
+        threading.Thread(target=resend_data, args=(db_s, conn, 'server'), daemon=True).start()
+        threading.Thread(target=resend_data, args=(conn, db_s, 'client'), daemon=True).start()
+
 
 # RFC-SCRAM: https://tools.ietf.org/html/rfc5802
 
