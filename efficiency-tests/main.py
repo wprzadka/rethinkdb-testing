@@ -34,8 +34,10 @@ def get_average_time(data_series: list):
 
 if __name__ == '__main__':
 
-    iterations_num = 1_0
-    tests = [('inserts', True), ('read_write', True)]
+    iterations_num = 400
+    tests = [('copy_table', True)]
+    # [('inserts', True), ('read_write', True), ('sorting', True), ('join_table', True),
+    # ('search_row_by_id_10_times', True), ('search_row_by_value_10_times', True)]
 
     for test_name, recreate_collection in tests:
         test_func_name = f'test_{test_name}_efficiency'
@@ -62,7 +64,7 @@ if __name__ == '__main__':
             series_names.append('MongoDb')
             print(f'MongoDb average operation time: {get_average_time(mongo_test.get_results(test_name))}')
 
-        if hasattr(MongoTest, test_func_name):
+        if hasattr(CouchTest, test_func_name):
             print('Couchdb')
             couch_test = CouchTest(test_name, recreate_collection)
             getattr(couch_test, test_func_name)(iterations_num)
