@@ -39,10 +39,22 @@ def get_average_time(data_series: list):
 
 if __name__ == '__main__':
 
-    iterations_num = 100
-    tests = [('copy_table', True)]
+    iterations_num = 1_000
+    tests = [('sorting', True)]
     # [('inserts', True), ('read_write', True), ('sorting', True), ('join_table', True),
     # ('search_row_by_id_10_times', True), ('search_row_by_value_10_times', True), ('copy_table', True)]
+
+    # sorting for iterations_num = 1_000
+    # MongoDb average operation time: 0.0001572537422180176
+    # RethinkDb average operation time: 0.0006701517105102539
+
+    # join for iterations_num = 1_000
+    # MongoDb average operation time: 0.00014704346656799317
+    # RethinkDb average operation time: 7.95125961303711e-05
+
+    # copy_table for iterations_num = 1_000
+    # MongoDb average operation time: 0.019695448875427245
+    # RethinkDb average operation time: 0.07064056396484375
 
     # search_row_by_id_10_times for iterations_num = 100
     # MongoDb average operation time: 9.33074951171875e-05
@@ -63,6 +75,7 @@ if __name__ == '__main__':
         series_names = []
         data_series = []
 
+        temp = []
         if hasattr(RethinkTest, test_func_name):
             print('RethinkDb')
             rethink_test = RethinkTest(test_name, recreate_collection)
@@ -70,6 +83,7 @@ if __name__ == '__main__':
 
             data_series.append(rethink_test.get_results(test_name))
             series_names.append('RethinkDb')
+            temp = get_average_time(rethink_test.get_results(test_name))
             print(f'RethinkDb average operation time: {get_average_time(rethink_test.get_results(test_name))}')
 
         if hasattr(MongoTest, test_func_name):
@@ -95,3 +109,4 @@ if __name__ == '__main__':
             series_names_li=series_names,
             test_case_name=test_name
         )
+        print(temp)
