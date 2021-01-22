@@ -39,10 +39,14 @@ def get_average_time(data_series: list):
 
 if __name__ == '__main__':
 
-    iterations_num = 1_000
-    tests = [('sorting', True)]
+    iterations_num = 10_000
+    tests = [('search_row_by_id_10_times', True), ('search_row_by_value_10_times', True)]
     # [('inserts', True), ('read_write', True), ('sorting', True), ('join_table', True),
     # ('search_row_by_id_10_times', True), ('search_row_by_value_10_times', True), ('copy_table', True)]
+
+    # search_row_by_value_10_times for iterations_num = 10_000
+    # MongoDb average operation time: 0.0006825590133666992
+    # RethinkDb average operation time: 0.0014159584045410156
 
     # sorting for iterations_num = 1_000
     # MongoDb average operation time: 0.0001572537422180176
