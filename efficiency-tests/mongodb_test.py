@@ -137,5 +137,26 @@ class MongoTest:
 
         print('test finished')
 
+    def test_copy_table_efficiency(self, iterations_num: int):
+        idx = 0
+        mod = iterations_num / min(10, iterations_num)
+
+        self.db.table_to_copy.drop()
+        self.db.source.drop()
+
+        print('test started')
+
+        while idx < iterations_num:
+            self.db.source.insert_one({'value': idx})
+            if idx % mod == 0:
+                start = time.time()
+                self.db.table_to_copy.insert_many(self.db.source.find())
+                end = time.time()
+                self.db.copy_table.insert_one({'id': idx, 'time': end - start})
+                self.db.table_to_copy.drop()
+            idx += 1
+
+        print('test finished')
+
     def get_results(self, schema: str) -> list:
         return list(self.db[schema].find())
