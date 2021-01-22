@@ -112,6 +112,7 @@ class RethinkTest:
             r.db('test').table_drop('source').run()
         r.db('test').table_create('source').run()
 
+        random.seed(87747)
         print('test started')
 
         while idx < iterations_num:
@@ -119,8 +120,9 @@ class RethinkTest:
             if idx % mod == 0:
                 start = time.time()
                 for _ in range(10):
-                    r.table('source').get(random.randint(0, idx)).run()
+                    print(r.table('source').get(random.randint(0, idx)).run(), end=', ')
                 end = time.time()
+                print()
                 r.table('search_row_by_id_10_times').insert({'id': idx, 'time': end - start}).run()
             idx += 1
 
@@ -135,6 +137,7 @@ class RethinkTest:
             r.db('test').table_drop('source').run()
         r.db('test').table_create('source').run()
 
+        random.seed(87747)
         print('test started')
 
         while idx < iterations_num:
