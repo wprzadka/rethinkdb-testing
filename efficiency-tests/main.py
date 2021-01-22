@@ -14,11 +14,16 @@ def plot_result(
         for series in data_series_li
     ]
 
+    domain = [
+        [row['id'] for row in sorted(series, key=lambda x: x['id'])]
+        for series in data_series_li
+    ]
+
     for name, series in zip(series_names_li, time_series):
         print(f'{name}: {series}')
 
-    for series in time_series:
-        plt.plot(series)
+    for arguments, series in zip(domain, time_series):
+        plt.plot(arguments, series)
 
     plt.legend(series_names_li)
     plt.xlabel('number of iterations')
