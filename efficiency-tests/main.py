@@ -34,10 +34,22 @@ def get_average_time(data_series: list):
 
 if __name__ == '__main__':
 
-    iterations_num = 400
+    iterations_num = 100
     tests = [('copy_table', True)]
     # [('inserts', True), ('read_write', True), ('sorting', True), ('join_table', True),
-    # ('search_row_by_id_10_times', True), ('search_row_by_value_10_times', True)]
+    # ('search_row_by_id_10_times', True), ('search_row_by_value_10_times', True), ('copy_table', True)]
+
+    # search_row_by_id_10_times for iterations_num = 100
+    # MongoDb average operation time: 9.33074951171875e-05
+    # RethinkDb average operation time: 7.951736450195312e-05
+
+    # search_row_by_value_10_times for iterations_num = 100
+    # MongoDb average operation time: 0.00012311697006225586
+    # RethinkDb average operation time: 0.00018972158432006836
+
+    # copy_table for iterations_num = 100
+    # MongoDb average operation time: 0.018484854698181154
+    # RethinkDb average operation time: 0.007321906089782715
 
     for test_name, recreate_collection in tests:
         test_func_name = f'test_{test_name}_efficiency'
