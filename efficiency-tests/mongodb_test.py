@@ -115,5 +115,27 @@ class MongoTest:
 
         print('test finished')
 
+    def test_search_row_by_value_10_times_efficiency(self, inserts_num: int):
+        idx = 0
+        mod = inserts_num / min(100, inserts_num)
+
+        self.db.source.drop()
+
+        random.seed(87747)
+        print('test started')
+
+        while idx < inserts_num:
+            self.db.source.insert_one({'value': idx})
+            if idx % mod == 0:
+                start = time.time()
+                for _ in range(10):
+                    print(self.db.source.find({'value': random.randint(0, idx)}).next(), end=', ')
+                end = time.time()
+                print()
+                self.db.search_row_by_value_10_times.insert_one({'id': idx, 'time': end - start})
+            idx += 1
+
+        print('test finished')
+
     def get_results(self, schema: str) -> list:
         return list(self.db[schema].find())

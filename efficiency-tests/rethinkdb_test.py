@@ -145,8 +145,9 @@ class RethinkTest:
             if idx % mod == 0:
                 start = time.time()
                 for _ in range(10):
-                    r.table('source').filter({'value': random.randint(0, idx)}).run()
+                    print(r.table('source').filter({'value': random.randint(0, idx)}).run(), end=', ')
                 end = time.time()
+                print()
                 r.table('search_row_by_value_10_times').insert({'id': idx, 'time': end - start}).run()
             idx += 1
 
