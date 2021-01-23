@@ -79,7 +79,6 @@ if __name__ == '__main__':
         series_names = []
         data_series = []
 
-        temp = []
         if hasattr(RethinkTest, test_func_name):
             print('RethinkDb')
             rethink_test = RethinkTest(test_name, recreate_collection)
@@ -87,7 +86,6 @@ if __name__ == '__main__':
 
             data_series.append(rethink_test.get_results(test_name))
             series_names.append('RethinkDb')
-            temp = get_average_time(rethink_test.get_results(test_name))
             print(f'RethinkDb average operation time: {get_average_time(rethink_test.get_results(test_name))}')
 
         if hasattr(MongoTest, test_func_name):
@@ -113,4 +111,3 @@ if __name__ == '__main__':
             series_names_li=series_names,
             test_case_name=test_name
         )
-        print(temp)
